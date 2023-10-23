@@ -44,42 +44,49 @@ def connected():
 
         messagebox.showinfo("Message", "Successful Sign In")
 
+
         #gia na diwxnei ta parathira afou erthw se ayto to page
         for item in root.winfo_children():
             item.destroy()
 
-        main_frame = tk.Frame(root, bg="lightblue")
+        main_frame = tk.Frame(root, bg="black")
         main_frame.pack(fill="both", expand=False)
 
-        #website gui
-        website = Label(root, text = "Website", width="10", height="3")
-        website.config(font =("Courier", 18))
-        website.pack()
+        website = tk.Label(main_frame, text="Website", width="10", height="3")
+        website.config(font=("Courier", 18))
+        website.grid(row=0, column=0)
 
         global website_text
-        website_text = tk.Entry(root)
-        website_text.config(font =("Courier", 18))
-        website_text.pack()
+        website_text = tk.Entry(main_frame)
+        website_text.config(font=("Courier", 18))
+        website_text.grid(row=1, column=0, padx="10", pady="10")
 
-        #password gui
-        password = Label(root, text = "Password", width="10", height="3")
-        password.config(font =("Courier", 18))
-        password.pack()
+        password = tk.Label(main_frame, text="Password", width="10", height="3")
+        password.config(font=("Courier", 18))
+        password.grid(row=2, column=0)
 
         global password_text
-        password_text = tk.Entry(root,show="*")
-        password_text.config(font =("Courier", 18))
-        password_text.pack()
+        password_text = tk.Entry(main_frame, show="*")
+        password_text.config(font=("Courier", 18))
+        password_text.grid(row=3, column=0, padx="10", pady="15")
 
-        #button for insert
-        insert_button = tk.Button(text="Insert", command=insert)
-        insert_button.config(font =("Courier", 18))
-        insert_button.pack(anchor="center", pady=10)
+        insert_button = tk.Button(main_frame, text="Insert", command=insert)
+        insert_button.config(font=("Courier", 18))
+        insert_button.grid(row=4, column=0, pady=10)
 
-        #gia ta password pou yparxoyn idi
-        check_button = tk.Button(text="History", command=checkpasses)
-        check_button.config(font =("Courier", 18))
-        check_button.pack(anchor="center", pady=10)
+        # Create and configure the Listbox
+        listbox = tk.Listbox(main_frame, selectmode=tk.SINGLE)
+        listbox.config(font=("Courier", 18), width=25)
+        listbox.grid(row=0, column=2, rowspan=500, padx=10, pady=10, sticky='ns')
+
+        c=cnx.cursor()
+        c.execute("select * from tag")
+        tag = c.fetchall()
+
+        for t in tag:
+            index=t[0]
+            website_id=t[1]
+            listbox.insert(tk.END, f"{index}: {website_id}")
         
 
     else:
@@ -94,7 +101,7 @@ root = tk.Tk()
 root.title("Password Manager")
 root.resizable(False, False)
 
-login_frame = tk.Frame(root, bg="lightblue")
+login_frame = tk.Frame(root, bg="black")
 login_frame.pack(fill="both", expand=False)
 
 #username gui
