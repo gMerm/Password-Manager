@@ -20,6 +20,7 @@ def insert():
             messagebox.showinfo("Message", "Success")
             website_text.delete(first=0, last=1000)
             password_text.delete(first=0, last=1000)
+            resetpage()
 
         except:
             messagebox.showinfo("Message", "Something went wrong")
@@ -28,12 +29,53 @@ def insert():
     cursor.close()
 
 
-#gia na vlepw poia passwords exw saved
-def checkpasses():
 
-    messagebox.showinfo("Message", "Proceed Carefully")
-    for item in root.winfo_children():
-        item.destroy()
+
+#reset page when insertion is done so the listbox refreshes
+def resetpage():
+
+    website = tk.Label(main_frame, text="Website", width="10", height="3")
+    website.config(font=("Courier", 18))
+    website.grid(row=0, column=0)
+
+    global website_text
+    website_text = tk.Entry(main_frame)
+    website_text.config(font=("Courier", 18))
+    website_text.grid(row=1, column=0, padx="10", pady="10")
+
+    password = tk.Label(main_frame, text="Password", width="10", height="3")
+    password.config(font=("Courier", 18))
+    password.grid(row=2, column=0)
+
+    global password_text
+    password_text = tk.Entry(main_frame, show="*")
+    password_text.config(font=("Courier", 18))
+    password_text.grid(row=3, column=0, padx="10", pady="15")
+
+    insert_button = tk.Button(main_frame, text="Insert", command=insert)
+    insert_button.config(font=("Courier", 18))
+    insert_button.grid(row=4, column=0, pady=10)
+
+    # Create and configure the Listbox
+    listbox = tk.Listbox(main_frame, selectmode=tk.SINGLE)
+    listbox.config(font=("Courier", 18), width=25)
+    listbox.grid(row=0, column=2, rowspan=500, padx=10, pady=10, sticky='ns')
+
+    c=cnx.cursor()
+    c.execute("select * from tag")
+    tag = c.fetchall()
+
+    for t in tag:
+        index=t[0]
+        website_id=t[1]
+        listbox.insert(tk.END, f"{index}: {website_id}")
+        
+    showpass_button = tk.Button(main_frame, text="Show Password")
+    showpass_button.config(font=("Courier", 18))
+    showpass_button.grid(row=4, column=2, pady=10)
+
+
+
 
 
 
@@ -49,6 +91,7 @@ def connected():
         for item in root.winfo_children():
             item.destroy()
 
+        global main_frame
         main_frame = tk.Frame(root, bg="black")
         main_frame.pack(fill="both", expand=False)
 
@@ -88,6 +131,10 @@ def connected():
             website_id=t[1]
             listbox.insert(tk.END, f"{index}: {website_id}")
         
+        showpass_button = tk.Button(main_frame, text="Show Password")
+        showpass_button.config(font=("Courier", 18))
+        showpass_button.grid(row=4, column=2, pady=10)
+
 
     else:
         messagebox.showinfo("Message", "Wrong Credentials")
