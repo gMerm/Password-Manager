@@ -17,6 +17,7 @@ def insert():
     else:
         try:
             cursor.execute("INSERT INTO tag (website, password) VALUES (%s, %s)", (website_text.get(), password_text.get()))
+            cnx.commit()
             messagebox.showinfo("Message", "Success")
             website_text.delete(first=0, last=1000)
             password_text.delete(first=0, last=1000)
@@ -25,10 +26,34 @@ def insert():
         except:
             messagebox.showinfo("Message", "Something went wrong")
 
-    cnx.commit()
-    cursor.close()
+
+#kanei delete to website
+def delete_selected_item():
+    for i in listbox.curselection():
+        selected_item = listbox.get(i)
+        index = selected_item.split(':')[0]
+
+        cursor1 = cnx.cursor()
+        cursor1.execute("DELETE FROM tag WHERE id = %s", (index,))
+        cnx.commit()
+        resetpage()
 
 
+
+#emfanizei messagebox me to password
+def selected_item():
+    for i in listbox.curselection():
+        
+        selected_item = listbox.get(i)
+        index = selected_item.split(':')[0]
+
+        cursor1 = cnx.cursor()
+        cursor1.execute("SELECT password FROM tag WHERE id = %s", (index,))
+        myresult = cursor1.fetchall()
+
+        for x in myresult:
+            messagebox.showinfo("Message", f"Password: {x[0]}")
+        
 
 
 #reset page when insertion is done so the listbox refreshes
@@ -57,6 +82,7 @@ def resetpage():
     insert_button.grid(row=4, column=0, pady=10)
 
     # Create and configure the Listbox
+    global listbox
     listbox = tk.Listbox(main_frame, selectmode=tk.SINGLE)
     listbox.config(font=("Courier", 18), width=25)
     listbox.grid(row=0, column=2, rowspan=500, padx=10, pady=10, sticky='ns')
@@ -70,9 +96,14 @@ def resetpage():
         website_id=t[1]
         listbox.insert(tk.END, f"{index}: {website_id}")
         
-    showpass_button = tk.Button(main_frame, text="Show Password")
+    showpass_button = tk.Button(main_frame, text="Show Password", command=selected_item)
     showpass_button.config(font=("Courier", 18))
-    showpass_button.grid(row=4, column=2, pady=10)
+    showpass_button.grid(row=1, column=3, pady=10, padx=10)
+
+
+    deletepass_button = tk.Button(main_frame, text="Del Password", command=delete_selected_item)
+    deletepass_button.config(font=("Courier", 18))
+    deletepass_button.grid(row=2, column=3, pady=10, padx=10)
 
 
 
@@ -118,6 +149,7 @@ def connected():
         insert_button.grid(row=4, column=0, pady=10)
 
         # Create and configure the Listbox
+        global listbox
         listbox = tk.Listbox(main_frame, selectmode=tk.SINGLE)
         listbox.config(font=("Courier", 18), width=25)
         listbox.grid(row=0, column=2, rowspan=500, padx=10, pady=10, sticky='ns')
@@ -131,9 +163,14 @@ def connected():
             website_id=t[1]
             listbox.insert(tk.END, f"{index}: {website_id}")
         
-        showpass_button = tk.Button(main_frame, text="Show Password")
+        showpass_button = tk.Button(main_frame, text="Show Password", command=selected_item)
         showpass_button.config(font=("Courier", 18))
-        showpass_button.grid(row=4, column=2, pady=10)
+        showpass_button.grid(row=1, column=3, pady=10, padx=10)
+
+
+        deletepass_button = tk.Button(main_frame, text="Del Password", command=delete_selected_item)
+        deletepass_button.config(font=("Courier", 18))
+        deletepass_button.grid(row=2, column=3, pady=10, padx=10)
 
 
     else:
