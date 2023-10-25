@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox, Label, Text
 import mysql.connector
-import bcrypt
+import base64
 
 #connect with mysql
 cnx = mysql.connector.connect(user="root", password="20028218", host="localhost", database="PASSMANAGER")
@@ -16,7 +16,12 @@ def insert():
         messagebox.showinfo("Message", "You need to fill the entries")
     else:
         try:
-            cursor.execute("INSERT INTO tag (website, password) VALUES (%s, %s)", (website_text.get(), password_text.get()))
+            #encoded password
+            encoded_pass=encode_pass(password_text.get())
+
+
+            #gia to insert dinw to hashed password
+            cursor.execute("INSERT INTO tag (website, password) VALUES (%s, %s)", (website_text.get(), encoded_pass))
             cnx.commit()
             messagebox.showinfo("Message", "Success")
             website_text.delete(first=0, last=1000)
@@ -52,7 +57,8 @@ def selected_item():
         myresult = cursor1.fetchall()
 
         for x in myresult:
-            messagebox.showinfo("Message", f"Password: {x[0]}")
+            decoded_pass=decode_pass(x[0])
+            messagebox.showinfo("Message", f"Password: {decoded_pass}")
         
 
 
@@ -106,7 +112,15 @@ def resetpage():
     deletepass_button.grid(row=2, column=3, pady=10, padx=10)
 
 
+#gia encoded password prin mpei sto db
+def encode_pass(password):
+    encoded_password = base64.b64encode(password.encode('utf-8')).decode('utf-8')
+    return encoded_password
 
+#when the password gets selected from the db gets decoded so the user can see it 
+def decode_pass(encoded_password):
+    decoded_password = base64.b64decode(encoded_password.encode('utf-8')).decode('utf-8')
+    return decoded_password
 
 
 
