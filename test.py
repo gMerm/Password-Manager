@@ -2,12 +2,12 @@ import tkinter as tk
 from tkinter import messagebox, Label, Text
 import mysql.connector
 import base64
+from PIL import Image, ImageTk
 
 #connect with mysql
 cnx = mysql.connector.connect(user="root", password="20028218", host="localhost", database="PASSMANAGER")
 username_credential="admin"
 password_credential="admin"
-
 
 #insert sto db
 def insert():
@@ -30,6 +30,16 @@ def insert():
 
         except:
             messagebox.showinfo("Message", "Something went wrong")
+
+
+#toggle password
+def toggle_password():
+    if password_text.cget('show') == '':
+        password_text.config(show='*')
+        toggle_btn.config(image=img)
+    else:
+        password_text.config(show='')
+        toggle_btn.config(image=img)
 
 
 #kanei delete to website
@@ -64,17 +74,19 @@ def selected_item():
 
 #reset page when insertion is done so the listbox refreshes
 def resetpage():
+    
+    root.title("Password Manager")
 
-    website = tk.Label(main_frame, text="Website", width="10", height="3")
+    website = tk.Label(main_frame, text="Website", width="10", height="2")
     website.config(font=("Courier", 18))
-    website.grid(row=0, column=0)
+    website.grid(row=0, column=0, pady=10)
 
     global website_text
     website_text = tk.Entry(main_frame)
     website_text.config(font=("Courier", 18))
     website_text.grid(row=1, column=0, padx="10", pady="10")
 
-    password = tk.Label(main_frame, text="Password", width="10", height="3")
+    password = tk.Label(main_frame, text="Password", width="10", height="2")
     password.config(font=("Courier", 18))
     password.grid(row=2, column=0)
 
@@ -93,6 +105,17 @@ def resetpage():
     listbox.config(font=("Courier", 18), width=25)
     listbox.grid(row=0, column=2, rowspan=500, padx=10, pady=10, sticky='ns')
 
+    password_text = tk.Entry(main_frame, show="*")
+    password_text.config(font=("Courier", 18))
+    password_text.grid(row=3, column=0, padx="10", pady="15")
+
+    toggle_btn = tk.Button(main_frame, command=toggle_password)
+    toggle_btn.config(image=img, bg="white")
+
+    #gia na topothetisw ta password_text kai toggle button konta
+    password_text.grid(row=3, column=0, padx="10", pady="15", sticky="w")
+    toggle_btn.grid(row=3, column=1, sticky="e")
+
     c=cnx.cursor()
     c.execute("select * from tag")
     tag = c.fetchall()
@@ -102,12 +125,11 @@ def resetpage():
         website_id=t[1]
         listbox.insert(tk.END, f"{index}: {website_id}")
         
-    showpass_button = tk.Button(main_frame, text="Show Password", command=selected_item)
+    showpass_button = tk.Button(main_frame, text="Show", command=selected_item, width="6", height="1")
     showpass_button.config(font=("Courier", 18))
     showpass_button.grid(row=1, column=3, pady=10, padx=10)
 
-
-    deletepass_button = tk.Button(main_frame, text="Del Password", command=delete_selected_item)
+    deletepass_button = tk.Button(main_frame, text="Delete", command=delete_selected_item, width="6", height="1")
     deletepass_button.config(font=("Courier", 18))
     deletepass_button.grid(row=2, column=3, pady=10, padx=10)
 
@@ -130,7 +152,7 @@ def connected():
     if username_text.get()==username_credential and loginpassword_text.get()==password_credential:
 
         messagebox.showinfo("Message", "Successful Sign In")
-
+        root.title("Password Manager")
 
         #gia na diwxnei ta parathira afou erthw se ayto to page
         for item in root.winfo_children():
@@ -140,16 +162,16 @@ def connected():
         main_frame = tk.Frame(root, bg="black")
         main_frame.pack(fill="both", expand=False)
 
-        website = tk.Label(main_frame, text="Website", width="10", height="3")
+        website = tk.Label(main_frame, text="Website", width="10", height="2")
         website.config(font=("Courier", 18))
-        website.grid(row=0, column=0)
+        website.grid(row=0, column=0, pady=10)
 
         global website_text
         website_text = tk.Entry(main_frame)
         website_text.config(font=("Courier", 18))
         website_text.grid(row=1, column=0, padx="10", pady="10")
 
-        password = tk.Label(main_frame, text="Password", width="10", height="3")
+        password = tk.Label(main_frame, text="Password", width="10", height="2")
         password.config(font=("Courier", 18))
         password.grid(row=2, column=0)
 
@@ -157,6 +179,14 @@ def connected():
         password_text = tk.Entry(main_frame, show="*")
         password_text.config(font=("Courier", 18))
         password_text.grid(row=3, column=0, padx="10", pady="15")
+
+        global toggle_btn
+        toggle_btn = tk.Button(main_frame, command=toggle_password)
+        toggle_btn.config(image=img, bg="white")
+
+        #gia na topothetisw ta password_text kai toggle button konta
+        password_text.grid(row=3, column=0, padx="10", pady="15", sticky="w")
+        toggle_btn.grid(row=3, column=1, sticky="e")
 
         insert_button = tk.Button(main_frame, text="Insert", command=insert)
         insert_button.config(font=("Courier", 18))
@@ -177,12 +207,12 @@ def connected():
             website_id=t[1]
             listbox.insert(tk.END, f"{index}: {website_id}")
         
-        showpass_button = tk.Button(main_frame, text="Show Password", command=selected_item)
+        showpass_button = tk.Button(main_frame, text="Show", command=selected_item, width="6", height="1")
         showpass_button.config(font=("Courier", 18))
         showpass_button.grid(row=1, column=3, pady=10, padx=10)
 
 
-        deletepass_button = tk.Button(main_frame, text="Del Password", command=delete_selected_item)
+        deletepass_button = tk.Button(main_frame, text="Delete", command=delete_selected_item, width="6", height="1")
         deletepass_button.config(font=("Courier", 18))
         deletepass_button.grid(row=2, column=3, pady=10, padx=10)
 
@@ -196,8 +226,17 @@ def connected():
 
 #mainloop gia authorization
 root = tk.Tk()
-root.title("Password Manager")
+root.title("Login")
 root.resizable(False, False)
+
+#gia to icon tou button password gia na anoigei o kwdikos visible
+img=Image.open("/Users/georgemermigkis/Desktop/coding/PassManager/visible.png")
+img=img.resize((20,20))
+img=ImageTk.PhotoImage(img)
+
+#gia na allaksw to icon tou ektelesimou
+imgIcon=tk.PhotoImage(file="/Users/georgemermigkis/Desktop/coding/PassManager/siren.png")
+root.iconphoto(True, imgIcon)
 
 login_frame = tk.Frame(root, bg="black")
 login_frame.pack(fill="both", expand=False)
