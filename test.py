@@ -5,7 +5,7 @@ import base64
 from PIL import Image, ImageTk
 
 #connect with mysql
-cnx = mysql.connector.connect(user="root", password="20028218", host="localhost", database="PASSMANAGER")
+cnx = mysql.connector.connect(user="root", password="", host="localhost", database="PASSMANAGER")
 username_credential="admin"
 password_credential="admin"
 
